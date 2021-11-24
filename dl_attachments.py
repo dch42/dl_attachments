@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-
+"""Download email attachments"""
 import os
 import sys
-from tqdm import tqdm
 import argparse
 import imaplib
 import email
-from pathlib import Path
+from tqdm import tqdm
 import yaml
 
 with open('config.yml', 'r') as stream:
@@ -43,47 +42,17 @@ RO = not args.seenflag
 
 
 def init_imap():
+    """Initialize connection object"""
     imap_ssl = imaplib.IMAP4_SSL(host=IMAP_HOST, port=PORT)
-    print(f"Connection Object : {imap_ssl}\nLogging in to mailbox...")
-    # login
+    print("Logging in to mailbox...")
     resp_code, response = imap_ssl.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
     print(f"Response Code : {resp_code}")
     print(f"Response      : {response[0].decode()}\n")
     return imap_ssl
 
 
-def list_mails(imap_ssl, mails):
-    mail_ids = mails[0].decode().split()
-    print(f"{len(mail_ids)} emails found...\n")
-    for id in tqdm((mail_ids), file=sys.stdout):
-        resp_code, mail_data = imap_ssl.fetch(id, '(RFC822)')
-        message = email.message_from_bytes(mail_data[0][1])
-        tqdm.write(
-            f'[MSG #{id}] \033[96m{message["From"]} \033[93m"{message["Subject"]}" \033[96m({message["Date"]})\033[00m\n')
-        dl_attachments(DL_DIR, message, id, imap_ssl)
-
-
-def dl_attachments(DL_DIR, message, id, imap_ssl):
-    """Downloads pdf/doc attachments from applicable email messages"""
-    for part in message.walk():
-        if part.get_content_type() == "multipart":
-            continue
-        if part.get('Content-Disposition') is None:
-            continue
-        filename = part.get_filename()
-        data = part.get_payload(decode=True)
-        if not data:
-            continue
-        if filename.endswith(tuple(extensions)):
-            with open(os.path.join(DL_DIR, filename), 'wb') as f:
-                f.write(data)
-                if args.seenflag:
-                    imap_ssl.uid("STORE", id, '+FLAGS', '\\Seen')
-                tqdm.write(
-                    f"==> \033[92m[DOWNLOAD SUCCESSFUL] `{filename}`!\033[0m\n")
-
-
 def set_mailbox(imap_ssl):
+    """Set mailbox and begin loop"""
     if args.inbox:
         if len(args.inbox) >= 1:
             for arg in args.inbox:
@@ -97,6 +66,7 @@ def set_mailbox(imap_ssl):
 
 
 def search_mail(imap_ssl):
+    """Set email search params"""
     if args.address:
         if len(args.address) >= 1:
             for arg in args.address:
@@ -114,6 +84,38 @@ def search_mail(imap_ssl):
         else:
             resp_code, mails = imap_ssl.search(None, "ALL")
             list_mails(imap_ssl, mails)
+
+
+def list_mails(imap_ssl, mails):
+    """Loop through messages"""
+    mail_ids = mails[0].decode().split()
+    print(f"{len(mail_ids)} emails found...\n")
+    for uid in tqdm((mail_ids), file=sys.stdout):
+        resp_code, mail_data = imap_ssl.fetch(uid, '(RFC822)')
+        message = email.message_from_bytes(mail_data[0][1])
+        tqdm.write(
+            f'[MSG #{id}] \033[96m{message["From"]} \033[93m"{message["Subject"]}" \033[96m({message["Date"]})\033[00m\n')
+        dl_attachments(DL_DIR, message, uid, imap_ssl)
+
+
+def dl_attachments(DL_DIR, message, uid, imap_ssl):
+    """Downloads pdf/doc attachments from applicable email messages"""
+    for part in message.walk():
+        if part.get_content_type() == "multipart":
+            continue
+        if part.get('Content-Disposition') is None:
+            continue
+        filename = part.get_filename()
+        data = part.get_payload(decode=True)
+        if not data:
+            continue
+        if filename.endswith(tuple(extensions)):
+            with open(os.path.join(DL_DIR, filename), 'wb') as f:
+                f.write(data)
+                if args.seenflag:
+                    imap_ssl.uid("STORE", uid, '+FLAGS', '\\Seen')
+                tqdm.write(
+                    f"==> \033[92m[DOWNLOAD SUCCESSFUL] `{filename}`!\033[0m\n")
 
 ##########################################
 
