@@ -29,8 +29,8 @@ EMAIL_INFO:
   EMAIL_PASSWORD: ""
   IMAP_HOST: ""
   PORT: 
+  ROOT_INBOX: ""
 
-# Place printer info here:
 MAIN_PRINTER: ""
 MEDIA: ""
 
