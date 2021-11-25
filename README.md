@@ -31,16 +31,16 @@ Printer information can be found via CUPS web admin interface, or with `lpstat -
 - `-d, --download`
     - download email attachments
 - `-p, --print`
-    - print downloaded attachments (if called without `d`, will print all in dl dir)
+    - print downloaded attachments (if called without 'd', will print all in dl dir)
 - `-s, --seenflag`
-    - set `seen` flag on processed emails (imap conn read only if not invoked)
+    - set 'seen' flag on processed emails (imap conn read only if not invoked)
 - `-u, --unseen`
-    - search for messages marked `unseen`
+    - search for messages marked 'unseen'
 - `-a, --address [ADDRESS...]`
     - search for messages from address(es)
 - `-i, --inbox [INBOX...]`
     - search inbox(es)
-    
+
 ## To-Do/WIP
 - convert pesky .docs to pdf 
 - add secondary printer cfg and args
