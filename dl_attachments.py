@@ -19,6 +19,7 @@ EMAIL_ADDRESS = (cfg['EMAIL_INFO']['EMAIL_ADDRESS'])
 EMAIL_PASSWORD = (cfg['EMAIL_INFO']['EMAIL_PASSWORD'])
 IMAP_HOST = (cfg['EMAIL_INFO']['IMAP_HOST'])
 PORT = (cfg['EMAIL_INFO']['PORT'])
+ROOT_INBOX = (cfg['EMAIL_INFO']['ROOT_INBOX'])
 
 DL_DIR = (cfg['DOWNLOAD_DIRECTORY'])
 
@@ -63,11 +64,11 @@ def set_mailbox(imap_ssl):
         if len(args.inbox) >= 1:
             for arg in args.inbox:
                 imap_ssl.select(
-                    mailbox=f'Inbox/{arg}', readonly=RO)
+                    mailbox=f'{ROOT_INBOX}/{arg}', readonly=RO)
                 search_mail(imap_ssl)
 
     else:
-        imap_ssl.select(mailbox=f'Inbox', readonly=RO)
+        imap_ssl.select(mailbox=f'{ROOT_INBOX}', readonly=RO)
         search_mail(imap_ssl)
 
 
