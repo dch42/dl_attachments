@@ -1,5 +1,5 @@
 # dl_attachments
-Download and print email attachments. 
+Download and print email attachments. Printing is handled using `lpr`.
 
 ## Setup 🔧
 clone the repo and change to directory:
