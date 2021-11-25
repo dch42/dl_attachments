@@ -7,7 +7,7 @@ clone the repo and change to directory:
 git clone https://github.com/dch42/dl_attachments.git && cd dl_attachments
 ~~~
 
-Running `make` will install dependencies and add executable permissions to relevant scripts.
+Running `make` will install dependencies and add executable permissions to the script.
 
 ~~~
 make
