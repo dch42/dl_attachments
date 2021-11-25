@@ -19,7 +19,7 @@
 # Download Directory
 #   Place path to download attachments to:
 DOWNLOAD_DIRECTORY: ""
-extensions_to_download: [".pdf", ".doc"]
+extensions_to_download: [".pdf"]
 
 
 # Email Account Info 
@@ -27,8 +27,11 @@ extensions_to_download: [".pdf", ".doc"]
 EMAIL_INFO:
   EMAIL_ADDRESS: ""
   EMAIL_PASSWORD: ""
-  IMAP_HOST: "imap.gmail.com"
-  PORT: 993
+  IMAP_HOST: ""
+  PORT: 
 
+# Place printer info here:
+MAIN_PRINTER: ""
+MEDIA: ""
 
 
