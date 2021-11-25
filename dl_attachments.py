@@ -48,6 +48,19 @@ args = parser.parse_args()
 RO = not args.seenflag
 
 
+def make_dir_if_no(dir1, dir2):
+    """Make dir if not exists"""
+    if not os.path.exists(f'{dir1}/{dir2}'):
+        os.makedirs(f'{dir1}/{dir2}')
+
+
+def sort_files(destination, dir1, item):
+    """Move file(s) from one dir to another"""
+    make_dir_if_no(dir1, destination)
+    file_sort = f"mv {dir1}/{item} {dir1}/{destination}/"
+    os.system(file_sort)
+
+
 def init_imap():
     """Initialize connection object"""
     imap_ssl = imaplib.IMAP4_SSL(host=IMAP_HOST, port=PORT)
@@ -133,6 +146,8 @@ def print_file(filename):
     os.system(
         f'lpr -P {MAIN_PRINTER} -o media={MEDIA} "{file_to_print}"')
     tqdm.write(f'Printing {file_to_print}...')
+    make_dir_if_no(DL_DIR, 'printed')
+    sort_files('printed', DL_DIR, filename)
 
 
 def print_all():
