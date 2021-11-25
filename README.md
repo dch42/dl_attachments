@@ -45,4 +45,3 @@ Printer information can be found via CUPS web admin interface, or with `lpstat -
 - convert pesky .docs to pdf 
 - add secondary printer cfg and args
 - add subject query arg
-- sort printed files
