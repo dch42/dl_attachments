@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Download email attachments"""
+"""Download and print email attachments"""
 import os
 import sys
 import argparse
 import imaplib
 import email
+from pathlib import Path
 from tqdm import tqdm
 import yaml
 
@@ -21,6 +22,9 @@ PORT = (cfg['EMAIL_INFO']['PORT'])
 
 DL_DIR = (cfg['DOWNLOAD_DIRECTORY'])
 
+MAIN_PRINTER = (cfg['MAIN_PRINTER'])
+MEDIA = (cfg['MEDIA'])
+
 extensions = (cfg['extensions_to_download'])
 
 
@@ -28,6 +32,8 @@ parser = argparse.ArgumentParser(
     description="Download and print email attachments")
 parser.add_argument(
     "-d", "--download", help='download email attachments', action="store_true")
+parser.add_argument(
+    "-p", "--print", help='print downloaded attachments', action="store_true")
 parser.add_argument(
     "-s", "--seenflag", help='set `seen` flag on processed emails', action="store_true")
 parser.add_argument(
@@ -94,7 +100,7 @@ def list_mails(imap_ssl, mails):
         resp_code, mail_data = imap_ssl.fetch(uid, '(RFC822)')
         message = email.message_from_bytes(mail_data[0][1])
         tqdm.write(
-            f'[MSG #{id}] \033[96m{message["From"]} \033[93m"{message["Subject"]}" \033[96m({message["Date"]})\033[00m\n')
+            f'[MSG #{uid}] \033[96m{message["From"]} \033[93m"{message["Subject"]}" \033[96m({message["Date"]})\033[00m\n')
         dl_attachments(DL_DIR, message, uid, imap_ssl)
 
 
@@ -116,11 +122,40 @@ def dl_attachments(DL_DIR, message, uid, imap_ssl):
                     imap_ssl.uid("STORE", uid, '+FLAGS', '\\Seen')
                 tqdm.write(
                     f"==> \033[92m[DOWNLOAD SUCCESSFUL] `{filename}`!\033[0m\n")
+                if args.print:
+                    print_file(filename)
 
-##########################################
+
+def print_file(filename):
+    """Print files"""
+    file_to_print = os.path.join(DL_DIR, filename)
+    os.system(
+        f'lpr -P {MAIN_PRINTER} -o media={MEDIA} "{file_to_print}"')
+    tqdm.write(f'Printing {file_to_print}...')
+
+
+def print_all():
+    """Print all files in dl dir"""
+    print_dir = Path(f'{DL_DIR}')
+    files = print_dir.iterdir()
+    for item in tqdm(files, file=sys.stdout):
+        if item.is_file():
+            filename = item.name
+            file_to_print = os.path.join(DL_DIR, filename)
+        else:
+            break
+        if file_to_print.endswith('.pdf'):
+            tqdm.write(f"Printing {file_to_print}...")
+            os.system(
+                f'lpr -P {MAIN_PRINTER} -o media={MEDIA} "{file_to_print}"')
+
+    ##########################################
 
 
 if args.download:
     imap_ssl = init_imap()
     set_mailbox(imap_ssl)
-imap_ssl.close()
+    imap_ssl.close()
+
+if args.print and not args.download:
+    print_all()
