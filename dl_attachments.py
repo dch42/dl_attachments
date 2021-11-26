@@ -44,7 +44,7 @@ parser.add_argument(
 parser.add_argument("-i", "--inbox", type=str, nargs='+',
                     help='search inbox(es)')
 parser.add_argument("-t", "--terms", type=str, nargs='+',
-                    help='search for term(s)')
+                    help='search subjects for term(s)')
 args = parser.parse_args()
 
 RO = not args.seenflag
