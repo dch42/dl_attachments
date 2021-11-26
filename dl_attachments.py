@@ -161,11 +161,7 @@ def print_all():
         else:
             break
         if file_to_print.endswith('.pdf'):
-            tqdm.write(f"Printing {file_to_print}...")
-            os.system(
-                f'lpr -P {MAIN_PRINTER} -o media={MEDIA} "{file_to_print}"')
-            make_dir_if_no(DL_DIR, 'printed')
-            sort_files('printed', DL_DIR, filename)
+            print_file(file_to_print)
 
     ##########################################
 
