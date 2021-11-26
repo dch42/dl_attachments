@@ -40,8 +40,5 @@ Printer information can be found via CUPS web admin interface, or with `lpstat -
     - search for messages from address(es)
 - `-i, --inbox [INBOX...]`
     - search inbox(es)
-
-## To-Do/WIP
-- convert pesky .docs to pdf 
-- add secondary printer cfg and args
-- add subject query arg
+- `-t, --terms [TERMS...]`
+    - search subjects for term(s)
