@@ -89,28 +89,29 @@ def set_mailbox(imap_ssl):
 
 def search_mail(imap_ssl):
     """Set email search params"""
-    if args.address:
-        if len(args.address) >= 1:
-            for arg in args.address:
+    if args.terms and args.address:
+        for address in args.address:
+            for term in args.terms:
                 if args.unseen:
-                    if args.terms:
-                        for term in args.terms:
-                            resp_code, mails = imap_ssl.search(
-                                None, f'(UNSEEN FROM "{arg}" SUBJECT "{term}")')
-                            list_mails(imap_ssl, mails)
-                    else:
-                        resp_code, mails = imap_ssl.search(
-                            None, f'(UNSEEN FROM "{arg}")')
-                        list_mails(imap_ssl, mails)
+                    resp_code, mails = imap_ssl.search(
+                        None, f'(UNSEEN FROM "{address}" SUBJECT "{term}")')
+                    list_mails(imap_ssl, mails)
                 else:
-                    if args.terms:
-                        for term in arg.terms:
-                            resp_code, mails = imap_ssl.search(None, f'(FROM "{arg}" SUBJECT {term}")')
-                            list_mails(imap_ssl, mails)
-                    else:
-                        resp_code, mails = imap_ssl.search(None, f'(FROM "{arg}")')
-                        list_mails(imap_ssl, mails)
+                    resp_code, mails = imap_ssl.search(
+                    None, f'(FROM "{address}" SUBJECT "{term}")')
+                    list_mails(imap_ssl, mails)
 
+    elif args.terms and not args.address:
+        for term in args.terms:
+            resp_code, mails = imap_ssl.search(None, f'(SUBJECT "{term}")')
+            list_mails(imap_ssl, mails)
+    elif args.address and not args.terms:
+        if args.unseen:
+            resp_code, mails = imap_ssl.search(None, f'(UNSEEN FROM "{arg}")')
+            list_mails(imap_ssl, mails)
+        else:
+            resp_code, mails = imap_ssl.search(None, f'(FROM "{arg}")')
+            list_mails(imap_ssl, mails)
     else:
         if args.unseen:
             resp_code, mails = imap_ssl.search(None, "UNSEEN")
