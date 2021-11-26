@@ -43,6 +43,8 @@ parser.add_argument(
     "-a", "--address", type=str, nargs='+', help='search for messages from address(es)')
 parser.add_argument("-i", "--inbox", type=str, nargs='+',
                     help='search inbox(es)')
+parser.add_argument("-t", "--terms", type=str, nargs='+',
+                    help='search for term(s)')
 args = parser.parse_args()
 
 RO = not args.seenflag
@@ -91,12 +93,24 @@ def search_mail(imap_ssl):
         if len(args.address) >= 1:
             for arg in args.address:
                 if args.unseen:
-                    resp_code, mails = imap_ssl.search(
-                        None, f'(UNSEEN FROM "{arg}")')
-                    list_mails(imap_ssl, mails)
+                    if args.terms:
+                        for term in args.terms:
+                            resp_code, mails = imap_ssl.search(
+                                None, f'(UNSEEN FROM "{arg}" SUBJECT "{term}")')
+                            list_mails(imap_ssl, mails)
+                    else:
+                        resp_code, mails = imap_ssl.search(
+                            None, f'(UNSEEN FROM "{arg}")')
+                        list_mails(imap_ssl, mails)
                 else:
-                    resp_code, mails = imap_ssl.search(None, f'(FROM "{arg}")')
-                    list_mails(imap_ssl, mails)
+                    if args.terms:
+                        for term in arg.terms:
+                            resp_code, mails = imap_ssl.search(None, f'(FROM "{arg}" SUBJECT {term}")')
+                            list_mails(imap_ssl, mails)
+                    else:
+                        resp_code, mails = imap_ssl.search(None, f'(FROM "{arg}")')
+                        list_mails(imap_ssl, mails)
+
     else:
         if args.unseen:
             resp_code, mails = imap_ssl.search(None, "UNSEEN")
