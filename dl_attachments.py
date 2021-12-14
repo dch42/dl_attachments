@@ -98,7 +98,7 @@ def search_mail(imap_ssl):
                     list_mails(imap_ssl, mails)
                 else:
                     resp_code, mails = imap_ssl.search(
-                    None, f'(FROM "{address}" SUBJECT "{term}")')
+                        None, f'(FROM "{address}" SUBJECT "{term}")')
                     list_mails(imap_ssl, mails)
     elif args.terms and not args.address:
         for term in args.terms:
@@ -107,7 +107,8 @@ def search_mail(imap_ssl):
     elif args.address and not args.terms:
         for address in args.address:
             if args.unseen:
-                resp_code, mails = imap_ssl.search(None, f'(UNSEEN FROM "{address}")')
+                resp_code, mails = imap_ssl.search(
+                    None, f'(UNSEEN FROM "{address}")')
                 list_mails(imap_ssl, mails)
             else:
                 resp_code, mails = imap_ssl.search(None, f'(FROM "{address}")')
@@ -129,7 +130,10 @@ def list_mails(imap_ssl, mails):
         resp_code, mail_data = imap_ssl.fetch(uid, '(RFC822)')
         message = email.message_from_bytes(mail_data[0][1])
         tqdm.write(
-            f'[MSG #{uid}] \033[96m{message["From"]} \033[93m"{message["Subject"]}" \033[96m({message["Date"]})\033[00m\n')
+            '='*20+f'[#{uid}]'+'='*20+f'\
+            \n\033[96mFROM:  {message["From"]}\
+            \n\033[93mSUBJ:  "{message["Subject"]}" \
+            \n\033[96mDATE:  ({message["Date"]})\033[00m\n')
         dl_attachments(DL_DIR, message, uid, imap_ssl)
 
 
@@ -144,15 +148,16 @@ def dl_attachments(DL_DIR, message, uid, imap_ssl):
         data = part.get_payload(decode=True)
         if not data:
             continue
-        if filename.endswith(tuple(extensions)):
-            with open(os.path.join(DL_DIR, filename), 'wb') as f:
-                f.write(data)
-                if args.seenflag:
-                    imap_ssl.uid("STORE", uid, '+FLAGS', '\\Seen')
-                tqdm.write(
-                    f"==> \033[92m[DOWNLOAD SUCCESSFUL] `{filename}`!\033[0m\n")
-                if args.print:
-                    print_file(filename)
+        if filename is not None:
+            if filename.endswith(tuple(extensions)):
+                with open(os.path.join(DL_DIR, filename), 'wb') as f:
+                    f.write(data)
+                    if args.seenflag:
+                        imap_ssl.uid("STORE", uid, '+FLAGS', '\\Seen')
+                    tqdm.write(
+                        f"\033[5m==>\033[0m \033[92m[DOWNLOAD SUCCESSFUL] `{filename}`!\033[0m\n")
+                    if args.print:
+                        print_file(filename)
 
 
 def print_file(filename):
