@@ -1,5 +1,6 @@
 # dl_attachments
 Download and print email attachments. Printing is handled using `lpr`.
+Currently only prints `.pdf` files.
 
 ## Setup 🔧
 clone the repo and change to directory:
