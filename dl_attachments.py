@@ -97,10 +97,10 @@ def get_mail_list(imap_ssl, query):
     """Return list of mails matching query"""
     mail = imap_ssl.search(None, f'({query})')[1]
     return mail
-    
+
 
 def search_mail(imap_ssl):
-    """Set email search params"""
+    """Search mailbox"""
     if args.terms and args.address:
         for address in args.address:
             for term in args.terms:
