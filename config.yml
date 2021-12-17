@@ -19,7 +19,7 @@
 # Download Directory
 #   Place path to download attachments to:
 DOWNLOAD_DIRECTORY: ""
-extensions_to_download: [".pdf"]
+EXTENSIONS_TO_DOWNLOAD: [".pdf"]
 
 
 # Email Account Info 
