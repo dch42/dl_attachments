@@ -88,7 +88,8 @@ def set_mailbox(imap_ssl):
 
 def create_query(term=False, address=False):
     """Build query string for mailbox"""
-    query = '%s%s%s' % ("UNSEEN " if args.unseen else '', f'FROM "{address}" ' if args.address else '', f'SUBJECT "{term}" ' if args.terms else '')
+    query = '%s%s%s' % ("UNSEEN " if args.unseen else '',
+                        f'FROM "{address}" ' if args.address else '', f'SUBJECT "{term}" ' if args.terms else '')
     query = query.rstrip()
     return query
 
