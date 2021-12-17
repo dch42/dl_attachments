@@ -9,6 +9,7 @@ from pathlib import Path
 from tqdm import tqdm
 import yaml
 
+# load and parse cfg file
 with open('config.yml', 'r') as stream:
     try:
         cfg = (yaml.safe_load(stream))
@@ -20,15 +21,12 @@ EMAIL_PASSWORD = (cfg['EMAIL_INFO']['EMAIL_PASSWORD'])
 IMAP_HOST = (cfg['EMAIL_INFO']['IMAP_HOST'])
 PORT = (cfg['EMAIL_INFO']['PORT'])
 ROOT_INBOX = (cfg['EMAIL_INFO']['ROOT_INBOX'])
-
 DL_DIR = (cfg['DOWNLOAD_DIRECTORY'])
-
 MAIN_PRINTER = (cfg['MAIN_PRINTER'])
 MEDIA = (cfg['MEDIA'])
+EXTENSIONS = (cfg['EXTENSIONS_TO_DOWNLOAD'])
 
-extensions = (cfg['extensions_to_download'])
-
-
+# define and parse args
 parser = argparse.ArgumentParser(
     description="Download and print email attachments")
 parser.add_argument(
@@ -47,6 +45,7 @@ parser.add_argument("-t", "--terms", type=str, nargs='+',
                     help='search subjects for term(s)')
 args = parser.parse_args()
 
+# open mailboxes as read only unless setting seen flags
 RO = not args.seenflag
 
 
@@ -65,25 +64,25 @@ def sort_files(destination, dir1, item):
 
 def init_imap():
     """Initialize connection object"""
-    imap_ssl = imaplib.IMAP4_SSL(host=IMAP_HOST, port=PORT)
+    imap_obj = imaplib.IMAP4_SSL(host=IMAP_HOST, port=PORT)
     print("Logging in to mailbox...")
-    resp_code, response = imap_ssl.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+    resp_code, response = imap_obj.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
     print(f"Response Code : {resp_code}")
     print(f"Response      : {response[0].decode()}\n")
-    return imap_ssl
+    return imap_obj
 
 
-def set_mailbox(imap_ssl):
+def set_mailbox(imap_obj):
     """Set mailbox and begin loop"""
     if args.inbox:
         if len(args.inbox) >= 1:
             for arg in args.inbox:
-                imap_ssl.select(
+                imap_obj.select(
                     mailbox=f'{ROOT_INBOX}/{arg}', readonly=RO)
-                search_mail(imap_ssl)
+                search_mail(imap_obj)
     else:
-        imap_ssl.select(mailbox=f'{ROOT_INBOX}', readonly=RO)
-        search_mail(imap_ssl)
+        imap_obj.select(mailbox=f'{ROOT_INBOX}', readonly=RO)
+        search_mail(imap_obj)
 
 
 def create_query(term=False, address=False):
@@ -94,46 +93,45 @@ def create_query(term=False, address=False):
     return query
 
 
-def get_mail_list(imap_ssl, query):
+def get_mail_list(imap_obj, query):
     """Return list of mails matching query"""
-    mail = imap_ssl.search(None, f'({query})')[1]
+    mail = imap_obj.search(None, f'({query})')[1]
     return mail
 
 
-def search_mail(imap_ssl):
+def search_mail(imap_obj):
     """Search mailbox"""
     if args.terms and args.address:
         for address in args.address:
             for term in args.terms:
                 query = create_query(term=term, address=address)
-                mail = get_mail_list(imap_ssl, query)
-                list_mail(imap_ssl, mail)
+                mail = get_mail_list(imap_obj, query)
+                list_mail(imap_obj, mail)
     elif args.terms and not args.address:
         for term in args.terms:
             query = create_query(term=term)
-            mail = get_mail_list(imap_ssl, query)
-            list_mail(imap_ssl, mail)
+            mail = get_mail_list(imap_obj, query)
+            list_mail(imap_obj, mail)
     elif args.address and not args.terms:
         for address in args.address:
             query = create_query(term=False, address=address)
-            mail = get_mail_list(imap_ssl, query)
-            list_mail(imap_ssl, mail)
+            mail = get_mail_list(imap_obj, query)
+            list_mail(imap_obj, mail)
     else:
         if args.unseen:
-            query = create_query(term=False, address=False)
-            mail = get_mail_list(imap_ssl, query)
-            list_mail(imap_ssl, mail)
+            mail = imap_obj.search(None, "UNSEEN")[1]
+            list_mail(imap_obj, mail)
         else:
-            mails = imap_ssl.search(None, "ALL")[1]
-            list_mail(imap_ssl, mails)
+            mail = imap_obj.search(None, "ALL")[1]
+            list_mail(imap_obj, mail)
 
 
-def list_mail(imap_ssl, mails):
+def list_mail(imap_obj, mails):
     """Loop through messages"""
     mail_ids = mails[0].decode().split()
     print(f"{len(mail_ids)} emails found...\n")
     for uid in tqdm((mail_ids), file=sys.stdout):
-        resp_code, mail_data = imap_ssl.fetch(uid, '(RFC822)')
+        mail_data = imap_obj.fetch(uid, '(RFC822)')[1]
         message = email.message_from_bytes(mail_data[0][1])
         tqdm.write(
             '='*20+f'[#{uid}]'+'='*20+f'\
@@ -189,13 +187,13 @@ def print_all():
         if file_to_print.endswith('.pdf'):
             print_file(file_to_print)
 
-    ##########################################
+###########################################################################
 
 
 if args.download:
-    imap_ssl = init_imap()
-    set_mailbox(imap_ssl)
-    imap_ssl.close()
+    imap_obj = init_imap()
+    set_mailbox(imap_obj)
+    imap_obj.close()
 
 if args.print and not args.download:
     print_all()
