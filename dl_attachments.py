@@ -156,12 +156,12 @@ def dl_attachments(DL_DIR, message, uid, imap_ssl):
             if filename.endswith(tuple(extensions)):
                 with open(os.path.join(DL_DIR, filename), 'wb') as f:
                     f.write(data)
-                    if args.seenflag:
-                        imap_ssl.uid("STORE", uid, '+FLAGS', '\\Seen')
                     tqdm.write(
                         f"\033[5m==>\033[0m \033[92m[DOWNLOAD SUCCESSFUL] `{filename}`!\033[0m\n")
                     if args.print:
                         print_file(filename)
+    if args.seenflag:
+        imap_ssl.uid("STORE", uid, '+FLAGS', '\\Seen')
 
 
 def print_file(filename):
