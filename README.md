@@ -40,12 +40,17 @@ MAIN_PRINTER: "PrinterCo_5500_3"
 MEDIA: "Letter"
 ~~~
 
+
 ## Usage
 
+Invoking like so: 
+
 ~~~
-./dl-attachments.py -dusp -a someaddress@mail.com another@mail.com -i Orders
+./dl-attachments.py -dusp -a someaddress@mail.com another@mail.com -i Orders -t urgent
 ~~~
 
+Will log in and search the *'Orders'* mailbox for *unseen* (new) emails from *'someaddress@mail.com'* and *'another@mail.com'*, where subject contains the word *'urgent'*, downloading and printing email attachments as it iterates through messages matching those conditions. After processing a message, it sets seen flags on the message so it will be marked as read and not double-processed. 
+ 
 ### Options
 - `-h, --help`
     - show this help message and exit
