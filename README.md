@@ -1,6 +1,10 @@
 # dl_attachments
-Download and print email attachments. Printing is handled using `lpr`.
+CLI script to conditionally search email inboxes, download and print attachment files. Printing is handled using `lpr`.
 Currently only prints `.pdf` files.
+
+Handy for dealing with large amounts of daily orders, labels, or other printable documents sent via email.
+
+Can be easily run as a cronjob.
 
 ## Setup 🔧
 clone the repo and change to directory:
