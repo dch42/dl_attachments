@@ -49,18 +49,6 @@ Invoking like so...
 ./dl-attachments.py -dusp -a someaddress@mail.com another@mail.com -i Orders -t urgent
 ~~~
 
-...will log in and search the *'Orders'* mailbox `-i Orders`
-
-for *unseen* (new) emails `-u`
-
-from *'someaddress@mail.com'* and *'another@mail.com'* `-a ...` 
-
-where subject contains the word *'urgent'* `-t urgent`, 
-
-downloading and printing email attachments as it iterates `-d -p`. 
-
-After processing a message, it sets seen flags on the message to mark as read `-s` 
-
 ### Options
 - `-h, --help`
     - show this help message and exit
