@@ -16,9 +16,29 @@ make
 
 ### Config
 
-Fill out the configuration file `config.yml`.
+Fill out the configuration file: `config.yml`.
 
 Printer information can be found via CUPS web admin interface, or with `lpstat -p -d`.
+
+~~~
+# Download Directory
+#   Place path to download attachments to:
+DOWNLOAD_DIRECTORY: "/data/downloads/"
+EXTENSIONS_TO_DOWNLOAD: [".pdf"]
+
+
+# Email Account Info 
+#   Place your email info here:  
+EMAIL_INFO:
+  EMAIL_ADDRESS: "address@email.com"
+  EMAIL_PASSWORD: "password"
+  IMAP_HOST: "imap.host.com"
+  PORT: 993
+  ROOT_INBOX: "Inbox"
+
+MAIN_PRINTER: "PrinterCo_5500_3"
+MEDIA: "Letter"
+~~~
 
 ## Usage
 
