@@ -1,5 +1,5 @@
 # dl_attachments
-CLI script to conditionally download and print attachment files from email inbox. Printing is handled using `lpr`.
+CLI script to conditionally download and print attachment files from email inboxes. Printing is handled using `lpr`.
 Currently only prints `.pdf` files.
 
 Handy for dealing with large amounts of daily orders, labels, or other printable documents sent via email.
