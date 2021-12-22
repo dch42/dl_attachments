@@ -32,7 +32,8 @@ Printer information can be found via CUPS web admin interface, or with `lpstat -
 - `-d, --download`
     - download email attachments
 - `-p, --print`
-    - print downloaded attachments (if called without 'd', will print all in dl dir)
+    - print downloaded attachments 
+        - if called without 'd', will print all printable files in dl dir
 - `-s, --seenflag`
     - set 'seen' flag on processed emails (imap conn read only if not invoked)
 - `-u, --unseen`
