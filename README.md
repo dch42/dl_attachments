@@ -33,14 +33,14 @@ Printer information can be found via CUPS web admin interface, or with `lpstat -
     - download email attachments
 - `-p, --print`
     - print downloaded attachments 
-        - if called without 'd', will print all printable files in dl dir
+        - *if called without 'd', will print all printable files in dl dir*
 - `-s, --seenflag`
-    - set 'seen' flag on processed emails (imap conn read only if not invoked)
+    - set 'seen' flag on processed emails after downloading attachments
 - `-u, --unseen`
     - search for messages marked 'unseen'
 - `-a, --address [ADDRESS...]`
-    - search for messages from address(es)
+    - search for messages from specific address(es)
 - `-i, --inbox [INBOX...]`
-    - search inbox(es)
+    - search specific inbox(es)
 - `-t, --terms [TERMS...]`
-    - search subjects for term(s)
+    - search subjects for specific term(s)
