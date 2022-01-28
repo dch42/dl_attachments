@@ -1,5 +1,5 @@
 # dl_attachments
-CLI script to conditionally download and print attachment files from email inboxes. Printing is handled using `lpr`.
+CLI script to conditionally download and print attachment files from email inboxes, invoked as `dla`. Printing is handled using `lpr`.
 Currently only prints `.pdf` files.
 
 Handy for dealing with large amounts of daily orders, labels, or other printable documents sent via email.
@@ -12,11 +12,11 @@ clone the repo and change to directory:
 git clone https://github.com/dch42/dl_attachments.git && cd dl_attachments
 ~~~
 
-Running `make` will install dependencies and add executable permissions to the script.
-
+Run add exec permissions and run `setup.sh`:
 ~~~
-make
+chmod +x ./setup.sh && ./setup.sh
 ~~~
+This will install dependencies and install the script as `dla` in /Users/$USER/bin, as well as add to bash or zsh $PATH.
 
 ### Config
 
@@ -47,10 +47,10 @@ MEDIA: "Letter"
 
 ## Usage
 
-Invoking like so...
+Invoke like so:
 
 ~~~
-./dl-attachments.py -dusp -a someaddress@mail.com another@mail.com -i Orders -t urgent
+dla -dusp -a someaddress@mail.com another@mail.com -i Orders -t urgent
 ~~~
 
 ### Options
