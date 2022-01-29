@@ -25,10 +25,8 @@ EXTENSIONS_TO_DOWNLOAD: [".pdf"]
 # Email Account Info 
 #   Place your email info here:  
 EMAIL_INFO:
-  EMAIL_ADDRESS: ""
-  EMAIL_PASSWORD: ""
   IMAP_HOST: ""
-  PORT: 
+  PORT: 993 
   ROOT_INBOX: ""
 
 MAIN_PRINTER: ""
