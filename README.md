@@ -32,10 +32,8 @@ EXTENSIONS_TO_DOWNLOAD: [".pdf"]
 
 
 # Email Account Info 
-#   Place your email info here:  
-EMAIL_INFO:
-  EMAIL_ADDRESS: "address@email.com"
-  EMAIL_PASSWORD: "password"
+#   Place your imap server info here:  
+IMAP_INFO:
   IMAP_HOST: "imap.host.com"
   PORT: 993
   ROOT_INBOX: "Inbox"
