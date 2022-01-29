@@ -5,7 +5,6 @@ import sys
 import argparse
 import imaplib
 import email
-import getpass
 from pathlib import Path
 from tqdm import tqdm
 import yaml
