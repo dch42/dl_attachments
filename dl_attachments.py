@@ -51,7 +51,8 @@ def crypt_cfg():
 
 
 def yaml_cfg():
-    with open(f'{hidden_path}/dla_config.yml', 'r') as stream:
+    """Load YAML config file"""
+    with open(f'{hidden_path}/{SCRIPT}_config.yml', 'r') as stream:
         try:
             cfg = (yaml.safe_load(stream))
             return cfg
@@ -207,9 +208,9 @@ if __name__ == '__main__':
     # load and parse cfg file
     cfg = yaml_cfg()
 
-    IMAP_HOST = (cfg['EMAIL_INFO']['IMAP_HOST'])
-    PORT = (cfg['EMAIL_INFO']['PORT'])
-    ROOT_INBOX = (cfg['EMAIL_INFO']['ROOT_INBOX'])
+    IMAP_HOST = (cfg['IMAP_INFO']['IMAP_HOST'])
+    PORT = (cfg['IMAP_INFO']['PORT'])
+    ROOT_INBOX = (cfg['IMAP_INFO']['ROOT_INBOX'])
     DL_DIR = (cfg['DOWNLOAD_DIRECTORY'])
     MAIN_PRINTER = (cfg['MAIN_PRINTER'])
     MEDIA = (cfg['MEDIA'])
