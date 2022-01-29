@@ -5,26 +5,11 @@ import sys
 import argparse
 import imaplib
 import email
+import getpass
 from pathlib import Path
 from tqdm import tqdm
 import yaml
-
-# load and parse cfg file
-with open('config.yml', 'r') as stream:
-    try:
-        cfg = (yaml.safe_load(stream))
-    except Exception as e:
-        print(e)
-
-EMAIL_ADDRESS = (cfg['EMAIL_INFO']['EMAIL_ADDRESS'])
-EMAIL_PASSWORD = (cfg['EMAIL_INFO']['EMAIL_PASSWORD'])
-IMAP_HOST = (cfg['EMAIL_INFO']['IMAP_HOST'])
-PORT = (cfg['EMAIL_INFO']['PORT'])
-ROOT_INBOX = (cfg['EMAIL_INFO']['ROOT_INBOX'])
-DL_DIR = (cfg['DOWNLOAD_DIRECTORY'])
-MAIN_PRINTER = (cfg['MAIN_PRINTER'])
-MEDIA = (cfg['MEDIA'])
-EXTENSIONS = (cfg['EXTENSIONS_TO_DOWNLOAD'])
+import cfg_crypt as cc
 
 # define and parse args
 parser = argparse.ArgumentParser(
@@ -47,6 +32,32 @@ args = parser.parse_args()
 
 # open mailboxes as read only unless setting seen flags
 RO = not args.seenflag
+
+SCRIPT = "dla"
+hidden_path = cc.make_hidden_dir(SCRIPT)
+
+
+def crypt_cfg():
+    """Create fernet encrypted cfg if not exists, decrypt"""
+    if not os.path.exists(f'{hidden_path}/.{SCRIPT}.key'):
+        print("No key detected...")
+        cc.gen_key(hidden_path, SCRIPT)
+    if not os.path.exists(f'{hidden_path}/.{SCRIPT}_cfg'):
+        login_info = cc.gen_cfg()
+        key = cc.read_key(hidden_path, SCRIPT)
+        cc.encrypt_cfg(login_info, key, hidden_path, SCRIPT)
+    key = cc.read_key(hidden_path, SCRIPT)
+    crypt_login = cc.decrypt_cfg(key, hidden_path, SCRIPT)
+    return crypt_login
+
+
+def yaml_cfg():
+    with open(f'{hidden_path}/dla_config.yml', 'r') as stream:
+        try:
+            cfg = (yaml.safe_load(stream))
+            return cfg
+        except Exception as e:
+            print(e)
 
 
 def make_dir_if_no(dir1, dir2):
@@ -138,7 +149,7 @@ def list_mail(imap_obj, mails):
             \n\033[96mFROM:  {message["From"]}\
             \n\033[93mSUBJ:  "{message["Subject"]}" \
             \n\033[96mDATE:  ({message["Date"]})\033[00m\n')
-        dl_attachments(DL_DIR, message, uid, imap_ssl)
+        dl_attachments(DL_DIR, message, uid, imap_obj)
 
 
 def dl_attachments(DL_DIR, message, uid, imap_ssl):
@@ -153,7 +164,7 @@ def dl_attachments(DL_DIR, message, uid, imap_ssl):
         if not data:
             continue
         if filename is not None:
-            if filename.endswith(tuple(extensions)):
+            if filename.endswith(tuple(EXTENSIONS)):
                 with open(os.path.join(DL_DIR, filename), 'wb') as f:
                     f.write(data)
                     tqdm.write(
@@ -187,13 +198,27 @@ def print_all():
         if file_to_print.endswith('.pdf'):
             print_file(file_to_print)
 
+
 ###########################################################################
 
+if __name__ == '__main__':
+    # encrypt/decrypt login info
+    crypt_login = crypt_cfg()
+    EMAIL_ADDRESS, EMAIL_PASSWORD = crypt_login['EMAIL'], crypt_login['PW']
+    # load and parse cfg file
+    cfg = yaml_cfg()
 
-if args.download:
-    imap_obj = init_imap()
-    set_mailbox(imap_obj)
-    imap_obj.close()
+    IMAP_HOST = (cfg['EMAIL_INFO']['IMAP_HOST'])
+    PORT = (cfg['EMAIL_INFO']['PORT'])
+    ROOT_INBOX = (cfg['EMAIL_INFO']['ROOT_INBOX'])
+    DL_DIR = (cfg['DOWNLOAD_DIRECTORY'])
+    MAIN_PRINTER = (cfg['MAIN_PRINTER'])
+    MEDIA = (cfg['MEDIA'])
+    EXTENSIONS = (cfg['EXTENSIONS_TO_DOWNLOAD'])
 
-if args.print and not args.download:
-    print_all()
+    if args.download:
+        imap_obj = init_imap()
+        set_mailbox(imap_obj)
+        imap_obj.close()
+    if args.print and not args.download:
+        print_all()
