@@ -7,12 +7,12 @@ Handy for dealing with large amounts of daily orders, labels, or other printable
 Can be easily run as a cronjob.
 
 ## Setup 🔧
-clone the repo and change to directory:
+Clone the repo and change to directory:
 ~~~
 git clone https://github.com/dch42/dl_attachments.git && cd dl_attachments
 ~~~
 
-Run add exec permissions and run `setup.sh`:
+Add exec permissions and run `setup.sh`:
 ~~~
 chmod +x ./setup.sh && ./setup.sh
 ~~~
