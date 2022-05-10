@@ -12,11 +12,11 @@ Clone the repo and change to directory:
 git clone https://github.com/dch42/dl_attachments.git && cd dl_attachments
 ~~~
 
-Add exec permissions and run `setup.sh`:
+If running MacOS or Linux with zsh/bash, add exec permissions and run `setup.sh`:
 ~~~
 chmod +x ./setup.sh && ./setup.sh
 ~~~
-This will install dependencies and install the script as `dla` in /Users/$USER/bin, as well as add to bash or zsh $PATH.
+This will install dependencies and install the script as `dla` in ~/bin, as well as add to bash or zsh $PATH.
 
 ### Config
 
